@@ -1,11 +1,10 @@
 package sstoroy.passwordGenerator.controller;
 
-import org.springframework.http.ResponseEntity;
-
 import java.util.List;
 import java.util.Map;
 
-public interface PasswordGeneratorAPI {
+public interface PasswordGeneratorResponse {
+    String SETTINGS_AMOUNT_PASSWORDS = "amount";
     String SETTINGS_PASSWORD_LENGTH = "length";
     String SETTINGS_ALPHABET = "alphabet";
     String SETTINGS_NUMBERS = "numbers";
@@ -17,7 +16,7 @@ public interface PasswordGeneratorAPI {
     String SETTINGS_NO_DUPLICATES = "noDuplicates";
     String SETTINGS_EXCLUDE_SIMILAR = "exclude_similar";
 
-    ResponseEntity<List<String>> generateJSONWithPasswords(int amount);
-    ResponseEntity<Map<String, String>> generateJSONFromSettings();
-    <T> ResponseEntity<Map<String, T>> generateJSONWithPasswordsAndSettings(int amount);
+    List<String> getPasswords();
+    Map<String, String> getSettings();
+    String getParameterURL();
 }

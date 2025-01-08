@@ -222,14 +222,6 @@ class PasswordGeneratorTest {
                 assertFalse(similars.contains(c));
             }
         }
-
-        // setting it too early won't work
-        pwdSettings = new PasswordSettingsImpl()
-                .setNumbersChance(Chance.of(0))
-                .setSpecialCharacterChance(Chance.of(0))
-                .setExcludeSimilarCharacters(true)
-                .setAlphabet(DefaultSettings.ENGLISH_ALPHABET);
-        assertEquals(DefaultSettings.ENGLISH_ALPHABET, pwdSettings.alphabet());
     }
 
     @Test

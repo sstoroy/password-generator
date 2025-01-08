@@ -26,4 +26,16 @@ record ChancePercentage(int chancePercentage) implements Chance {
     public int getPercentageAmount(int amount) {
         return (chancePercentage() * amount) / 100;
     }
+
+    @Override
+    public String toString() {
+        return String.valueOf(chancePercentage);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if ((!(o instanceof Chance that))) return false;
+        return chancePercentage() == that.chancePercentage();
+    }
 }

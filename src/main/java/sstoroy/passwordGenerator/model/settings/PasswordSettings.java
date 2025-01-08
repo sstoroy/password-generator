@@ -18,6 +18,7 @@ public interface PasswordSettings {
     boolean onlyLowercase();
     boolean beginWithLetter();
     boolean noDuplicates();
+    boolean excludeSimilarCharacters();
 
     /** Sets the password length. If the length is shorter than the minimum length,
      * it will be set to the min length, and vice versa for longer than maximum.
@@ -57,8 +58,8 @@ public interface PasswordSettings {
      * alphabet, will be set to false automatically. */
     PasswordSettings setNoDuplicates(boolean noDuplicates);
 
-    /** If true, removes similar characters from all the alphabets. Must be set after
-     * setting the alphabets. Setting this to false after true will NOT reinstate
-     * the removed characters. */
+    /** If true, removes similar characters from all the alphabets. If a new alphabet
+     * is set, it will remove similar characters from that alphabet. Setting this to
+     * false after true will NOT reinstate the removed characters. */
     PasswordSettings setExcludeSimilarCharacters(boolean excludeSimilarCharacters);
 }

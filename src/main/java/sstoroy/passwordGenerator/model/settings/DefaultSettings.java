@@ -13,8 +13,8 @@ public abstract class DefaultSettings implements PasswordSettings {
     public final static String PASSWORD_LENGTH = "10";
     public final static String ENGLISH_ALPHABET = "abcdefghijklmnopqrstuvwxyz";
     public final static String DECIMAL_NUMBERS = "0123456789";
-    public final static String NUMBERS_CHANCE = "25";
-    public final static String SPECIAL_CHARACTERS = "!\"#$%&'()*+,-./:;<=>?@[]^_`{|}~\\ ";
+    public final static String NUMBERS_CHANCE_PERCENTAGE = "25";
+    public final static String SPECIAL_CHARACTERS = "!#$%&'()*+,-./\\:;<>=?@[]^_`{|}~ ";
     public final static String SPECIAL_CHARACTER_CHANCE_PERCENTAGE = "25";
     public final static String ONLY_LOWERCASE = "false";
     public final static String BEGIN_WITH_LETTER = "true";

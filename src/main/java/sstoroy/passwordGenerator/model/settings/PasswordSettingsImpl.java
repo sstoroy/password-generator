@@ -6,12 +6,13 @@ public class PasswordSettingsImpl extends DefaultSettings {
     private int length = DefaultSettings.MIN_LENGTH;
     private String alphabet = ENGLISH_ALPHABET;
     private String numbers = DECIMAL_NUMBERS;
-    private Chance numberChance = Chance.of(NUMBERS_CHANCE);
+    private Chance numberChance = Chance.of(NUMBERS_CHANCE_PERCENTAGE);
     private String specialCharacters = SPECIAL_CHARACTERS;
     private Chance specialCharacterChance = Chance.of(SPECIAL_CHARACTER_CHANCE_PERCENTAGE);
     private boolean onlyLowercase = Boolean.parseBoolean(ONLY_LOWERCASE);
     private boolean beginWithLetter = Boolean.parseBoolean(BEGIN_WITH_LETTER);
     private boolean noDuplicates = Boolean.parseBoolean(NO_DUPLICATES);
+    private boolean excludeSimilar = Boolean.parseBoolean(EXCLUDE_SIMILAR_CHARACTERS);
 
     @Override public int passwordLength() {return length;}
     @Override public String alphabet() {return alphabet;}
@@ -22,6 +23,7 @@ public class PasswordSettingsImpl extends DefaultSettings {
     @Override public boolean onlyLowercase() {return onlyLowercase;}
     @Override public boolean beginWithLetter() {return beginWithLetter;}
     @Override public boolean noDuplicates() {return noDuplicates;}
+    @Override public boolean excludeSimilarCharacters() {return excludeSimilar;}
 
     @Override
     public PasswordSettings setPasswordLength(int length) {
@@ -43,23 +45,23 @@ public class PasswordSettingsImpl extends DefaultSettings {
     public PasswordSettings setAlphabet(String alphabet) {
         if (alphabet == null || alphabet.isEmpty()) {
             alphabet = ENGLISH_ALPHABET;
-        } else {
-            StringBuilder alphabetBuilder = new StringBuilder();
-            for (char c : alphabet.toCharArray()) {
-                // no dupes in current alphabet, not an integer and not currently special character
-                if (
-                    doesNotContain(alphabetBuilder.toString(), c) &&
-                    doesNotContain(DefaultSettings.DECIMAL_NUMBERS, c) &&
-                    doesNotContain(DefaultSettings.SPECIAL_CHARACTERS, c)
-                ) {
-                    alphabetBuilder.append(c);
-                }
-                if (alphabetBuilder.isEmpty()) {
-                    alphabet = ENGLISH_ALPHABET;
-                } else {
-                    alphabet = alphabetBuilder.toString();
-                }
+        }
+        StringBuilder alphabetBuilder = new StringBuilder();
+        for (char c : alphabet.toCharArray()) {
+            // no dupes in current alphabet, not an integer and not currently special character
+            if (
+                doesNotContain(alphabetBuilder.toString(), c) &&
+                doesNotContain(DefaultSettings.DECIMAL_NUMBERS, c) &&
+                doesNotContain(DefaultSettings.SPECIAL_CHARACTERS, c) &&
+                (excludeSimilarCharacters() && !SIMILAR_CHARACTERS.contains(c))
+            ) {
+                alphabetBuilder.append(c);
             }
+        }
+        if (alphabetBuilder.isEmpty()) {
+            alphabet = ENGLISH_ALPHABET;
+        } else {
+            alphabet = alphabetBuilder.toString();
         }
         this.alphabet = alphabet;
         return this;
@@ -73,22 +75,22 @@ public class PasswordSettingsImpl extends DefaultSettings {
     public PasswordSettings setNumbers(String numbers) {
         if (numbers == null || numbers.isEmpty()) {
             numbers = DECIMAL_NUMBERS;
-        } else {
-            StringBuilder numbersBuilder = new StringBuilder();
-            for (Character c : numbers.toCharArray()) {
-                // no dupes, and is an integer
-                if (
-                    doesNotContain(numbersBuilder.toString(), c) &&
-                    DefaultSettings.DECIMAL_NUMBERS.contains(String.valueOf(c))
-                ) {
-                    numbersBuilder.append(c);
-                }
-                if (numbersBuilder.isEmpty()) {
-                    numbers = DECIMAL_NUMBERS;
-                } else {
-                    numbers = numbersBuilder.toString();
-                }
+        }
+        StringBuilder numbersBuilder = new StringBuilder();
+        for (Character c : numbers.toCharArray()) {
+            // no dupes, and is an integer
+            if (
+                doesNotContain(numbersBuilder.toString(), c) &&
+                DefaultSettings.DECIMAL_NUMBERS.contains(String.valueOf(c)) &&
+                (excludeSimilarCharacters() && !SIMILAR_CHARACTERS.contains(c))
+            ) {
+                numbersBuilder.append(c);
             }
+        }
+        if (numbersBuilder.isEmpty()) {
+            numbers = DECIMAL_NUMBERS;
+        } else {
+            numbers = numbersBuilder.toString();
         }
         this.numbers = numbers;
         return this;
@@ -97,7 +99,7 @@ public class PasswordSettingsImpl extends DefaultSettings {
     @Override
     public PasswordSettings setNumbersChance(Chance numbersChance) {
         if (numbersChance == null) {
-            numbersChance = Chance.of(NUMBERS_CHANCE);
+            numbersChance = Chance.of(NUMBERS_CHANCE_PERCENTAGE);
         }
         if (numbersChance.isAlways()) {
             setBeginWithLetter(false);
@@ -135,25 +137,28 @@ public class PasswordSettingsImpl extends DefaultSettings {
 
     @Override
     public PasswordSettings setExcludeSimilarCharacters(boolean excludeSimilarCharacters) {
-        if (excludeSimilarCharacters) {
-            String pool = removeSimilarCharacters(alphabet());
-            if (pool.isEmpty()) {
-                pool = removeSimilarCharacters(DefaultSettings.ENGLISH_ALPHABET);
-            }
-            setAlphabet(pool);
-
-            pool = removeSimilarCharacters(numbers());
-            if (pool.isEmpty()) {
-                pool = removeSimilarCharacters(DefaultSettings.DECIMAL_NUMBERS);
-            }
-            setNumbers(pool);
-
-            pool = removeSimilarCharacters(specialCharacters());
-            if (pool.isEmpty()) {
-                pool = removeSimilarCharacters(DefaultSettings.SPECIAL_CHARACTERS);
-            }
-            setSpecialCharacters(pool);
+        if (!excludeSimilarCharacters) {
+            this.excludeSimilar = false;
+            return this;
         }
+        String pool = removeSimilarCharacters(alphabet());
+        if (pool.isEmpty()) {
+            pool = removeSimilarCharacters(DefaultSettings.ENGLISH_ALPHABET);
+        }
+        setAlphabet(pool);
+
+        pool = removeSimilarCharacters(numbers());
+        if (pool.isEmpty()) {
+            pool = removeSimilarCharacters(DefaultSettings.DECIMAL_NUMBERS);
+        }
+        setNumbers(pool);
+
+        pool = removeSimilarCharacters(specialCharacters());
+        if (pool.isEmpty()) {
+            pool = removeSimilarCharacters(DefaultSettings.SPECIAL_CHARACTERS);
+        }
+        setSpecialCharacters(pool);
+        this.excludeSimilar = true;
         return this;
     }
 
@@ -177,20 +182,20 @@ public class PasswordSettingsImpl extends DefaultSettings {
     public PasswordSettings setNoDuplicates(boolean noDuplicates) {
         if (!noDuplicates) {
             this.noDuplicates = false;
-        } else {
-            // check that it's possible to create a password with no dupes
-            boolean enoughLetters =
-                    Chance.opposite(numbersChance())
-                            .getPercentageAmount(passwordLength())
-                            <= alphabet().length();
-            boolean enoughNumbers = numbersChance()
-                    .getPercentageAmount(passwordLength())
-                    <= numbers().length();
-            boolean enoughSpecials = specialCharacterChance()
-                    .getPercentageAmount(passwordLength())
-                    <= specialCharacters().length();
-            this.noDuplicates = enoughLetters && enoughNumbers && enoughSpecials;
+            return this;
         }
+        // check that it's possible to create a password with no dupes
+        boolean enoughLetters =
+                Chance.opposite(numbersChance())
+                        .getPercentageAmount(passwordLength())
+                        <= alphabet().length();
+        boolean enoughNumbers = numbersChance()
+                .getPercentageAmount(passwordLength())
+                <= numbers().length();
+        boolean enoughSpecials = specialCharacterChance()
+                .getPercentageAmount(passwordLength())
+                <= specialCharacters().length();
+        this.noDuplicates = enoughLetters && enoughNumbers && enoughSpecials;
         return this;
     }
 }

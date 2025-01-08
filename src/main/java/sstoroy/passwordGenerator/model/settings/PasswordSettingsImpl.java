@@ -53,7 +53,7 @@ public class PasswordSettingsImpl extends DefaultSettings {
                 doesNotContain(alphabetBuilder.toString(), c) &&
                 doesNotContain(DefaultSettings.DECIMAL_NUMBERS, c) &&
                 doesNotContain(DefaultSettings.SPECIAL_CHARACTERS, c) &&
-                (excludeSimilarCharacters() && !SIMILAR_CHARACTERS.contains(c))
+                !(excludeSimilarCharacters() && SIMILAR_CHARACTERS.contains(c))
             ) {
                 alphabetBuilder.append(c);
             }
@@ -82,7 +82,7 @@ public class PasswordSettingsImpl extends DefaultSettings {
             if (
                 doesNotContain(numbersBuilder.toString(), c) &&
                 DefaultSettings.DECIMAL_NUMBERS.contains(String.valueOf(c)) &&
-                (excludeSimilarCharacters() && !SIMILAR_CHARACTERS.contains(c))
+                !(excludeSimilarCharacters() && SIMILAR_CHARACTERS.contains(c))
             ) {
                 numbersBuilder.append(c);
             }

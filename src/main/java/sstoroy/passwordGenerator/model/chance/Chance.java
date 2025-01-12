@@ -4,7 +4,7 @@ package sstoroy.passwordGenerator.model.chance;
  * A class that holds a percentage of something, aka. a value between 0 and 100 inclusive.
  */
 public interface Chance {
-    /** Creates a new Chance objec by trying to parse a String */
+    /** Creates a new Chance object by trying to parse a String */
     static Chance of(String chance) {
         return of(Integer.parseInt(chance));
     }

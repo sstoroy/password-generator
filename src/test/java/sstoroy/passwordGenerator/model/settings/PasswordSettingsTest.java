@@ -2,10 +2,20 @@ package sstoroy.passwordGenerator.model.settings;
 
 import org.junit.jupiter.api.Test;
 import sstoroy.passwordGenerator.model.chance.Chance;
+import sstoroy.passwordGenerator.model.settings.manager.DefaultSettings;
+import sstoroy.passwordGenerator.model.settings.manager.PasswordSettings;
+import sstoroy.passwordGenerator.model.settings.manager.PasswordSettingsImpl;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class PasswordSettingsTest {
+
+    @Test
+    void defaultSettings() {
+        for (SettingKey key : SettingKey.values()) {
+            assertNotNull(DefaultSettings.getDefaultSetting(key));
+        }
+    }
 
     @Test
     void correctCharacterPools() {
@@ -16,20 +26,20 @@ class PasswordSettingsTest {
         String expectedSpecials = "|!\"#¤%&/()=?";
         settings.setAlphabet(expectedAlphabet);
         settings.setNumbers(expectedNumbers);
-        settings.setSpecialCharacters(expectedSpecials);
+        settings.setSymbols(expectedSpecials);
         assertEquals(expectedAlphabet, settings.alphabet());
         assertEquals(expectedNumbers, settings.numbers());
-        assertEquals(expectedSpecials, settings.specialCharacters());
+        assertEquals(expectedSpecials, settings.symbols());
 
         expectedAlphabet = "a";
         expectedNumbers = "0";
         expectedSpecials = "!";
         settings.setAlphabet(expectedAlphabet);
         settings.setNumbers(expectedNumbers);
-        settings.setSpecialCharacters(expectedSpecials);
+        settings.setSymbols(expectedSpecials);
         assertEquals(expectedAlphabet, settings.alphabet());
         assertEquals(expectedNumbers, settings.numbers());
-        assertEquals(expectedSpecials, settings.specialCharacters());
+        assertEquals(expectedSpecials, settings.symbols());
 
         settings.setAlphabet("aaa");
         assertEquals(expectedAlphabet, settings.alphabet());
@@ -41,29 +51,29 @@ class PasswordSettingsTest {
 
         settings.setAlphabet(" ");
         settings.setNumbers(" ");
-        settings.setSpecialCharacters(" ");
-        assertEquals(DefaultSettings.ENGLISH_ALPHABET, settings.alphabet());
-        assertEquals(DefaultSettings.DECIMAL_NUMBERS, settings.numbers());
-        assertEquals(" ", settings.specialCharacters());
+        settings.setSymbols(" ");
+        assertEquals(DefaultSettings.getDefaultSetting(SettingKey.ALPHABET).getStringUnsafe(), settings.alphabet());
+        assertEquals(DefaultSettings.getDefaultSetting(SettingKey.NUMBERS).getStringUnsafe(), settings.numbers());
+        assertEquals(" ", settings.symbols());
 
         settings.setAlphabet(null);
         settings.setNumbers(null);
-        settings.setSpecialCharacters(null);
-        assertEquals(DefaultSettings.ENGLISH_ALPHABET, settings.alphabet());
-        assertEquals(DefaultSettings.DECIMAL_NUMBERS, settings.numbers());
-        assertEquals(DefaultSettings.SPECIAL_CHARACTERS, settings.specialCharacters());
+        settings.setSymbols(null);
+        assertEquals(DefaultSettings.getDefaultSetting(SettingKey.ALPHABET).getStringUnsafe(), settings.alphabet());
+        assertEquals(DefaultSettings.getDefaultSetting(SettingKey.NUMBERS).getStringUnsafe(), settings.numbers());
+        assertEquals(DefaultSettings.getDefaultSetting(SettingKey.SYMBOLS).getStringUnsafe(), settings.symbols());
 
         settings.setAlphabet("");
         settings.setNumbers("");
-        settings.setSpecialCharacters("");
-        assertEquals(DefaultSettings.ENGLISH_ALPHABET, settings.alphabet());
-        assertEquals(DefaultSettings.DECIMAL_NUMBERS, settings.numbers());
-        assertEquals(DefaultSettings.SPECIAL_CHARACTERS, settings.specialCharacters());
+        settings.setSymbols("");
+        assertEquals(DefaultSettings.getDefaultSetting(SettingKey.ALPHABET).getStringUnsafe(), settings.alphabet());
+        assertEquals(DefaultSettings.getDefaultSetting(SettingKey.NUMBERS).getStringUnsafe(), settings.numbers());
+        assertEquals(DefaultSettings.getDefaultSetting(SettingKey.SYMBOLS).getStringUnsafe(), settings.symbols());
 
         settings.setAlphabet("123!?+");
         settings.setNumbers("abc!?+");
-        assertEquals(DefaultSettings.ENGLISH_ALPHABET, settings.alphabet());
-        assertEquals(DefaultSettings.DECIMAL_NUMBERS, settings.numbers());
+        assertEquals(DefaultSettings.getDefaultSetting(SettingKey.ALPHABET).getStringUnsafe(), settings.alphabet());
+        assertEquals(DefaultSettings.getDefaultSetting(SettingKey.NUMBERS).getStringUnsafe(), settings.numbers());
     }
 
     @Test
@@ -72,25 +82,25 @@ class PasswordSettingsTest {
         settings.setExcludeSimilarCharacters(true);
         String expectedAlphabet = "abcdefghjkmnprstuvwxyz";
         String expectedNumbers = "23456789";
-        String expectedSpecials = DefaultSettings.SPECIAL_CHARACTERS;
+        String expectedSpecials = DefaultSettings.getDefaultSetting(SettingKey.SYMBOLS).getStringUnsafe();
         assertEquals(expectedAlphabet, settings.alphabet());
         assertEquals(expectedNumbers, settings.numbers());
-        assertEquals(expectedSpecials, settings.specialCharacters());
+        assertEquals(expectedSpecials, settings.symbols());
 
         settings.setAlphabet("io");
         settings.setNumbers("01");
         settings.setExcludeSimilarCharacters(true);
         assertEquals(expectedAlphabet, settings.alphabet());
         assertEquals(expectedNumbers, settings.numbers());
-        assertEquals(expectedSpecials, settings.specialCharacters());
+        assertEquals(expectedSpecials, settings.symbols());
 
         settings.setAlphabet("abcidef");
         settings.setNumbers("2031");
-        settings.setSpecialCharacters("!l?");
+        settings.setSymbols("!l?");
         settings.setExcludeSimilarCharacters(true);
         assertEquals("abcdef", settings.alphabet());
         assertEquals("23", settings.numbers());
-        assertEquals("!?", settings.specialCharacters());
+        assertEquals("!?", settings.symbols());
     }
 
     @Test
@@ -115,13 +125,13 @@ class PasswordSettingsTest {
             .setAlphabet("abcde")
             .setNumbers("12345")
             .setNumbersChance(Chance.of(50))
-            .setSpecialCharacters("!")
+            .setSymbols("!")
             .setPasswordLength(12)
             .setNoDuplicates(true);
         assertFalse(settings.noDuplicates());
 
         settings.setPasswordLength(8)
-                .setSpecialCharacterChance(Chance.never())
+                .setSymbolsChance(Chance.never())
                 .setNoDuplicates(true);
         assertTrue(settings.noDuplicates());
 
@@ -130,7 +140,7 @@ class PasswordSettingsTest {
 
         settings = new PasswordSettingsImpl()
             .setNumbersChance(Chance.never())
-            .setSpecialCharacterChance(Chance.never())
+            .setSymbolsChance(Chance.never())
             .setPasswordLength(30)
             .setNoDuplicates(true);
         assertFalse(settings.noDuplicates());

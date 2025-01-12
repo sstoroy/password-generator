@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <title>Password Generator</title>
+</head>
+<body>
+<h1>Password Generator</h1>
+<div th:insert="~{partials/_password_form.html}"></div>
+<div th:insert="~{partials/_generated_passwords.html}"></div>
+<div th:insert="~{partials/_author.html}"></div>
+<div th:insert="~{partials/_api_info.html}"></div>
+
+<script src="/scripts.js">
+</script>
+<script th:inline="javascript">
+    /*<![CDATA[*/
+    /*[+ [# th:insert="~{script.js}" /] +]*/
+    /*]]>*/
+</script>
+</body>
+</html>

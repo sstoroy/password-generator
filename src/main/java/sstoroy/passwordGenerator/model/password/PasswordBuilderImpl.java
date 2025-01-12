@@ -54,6 +54,7 @@ public class PasswordBuilderImpl implements PasswordBuilder {
 
         // first for numbers
         for (int i=0; i<numNumbers; i++) {
+            if (pool.isEmpty()) break;
             int randomPoolIndex = rand.nextInt(pool.size());
             int randomIndex = pool.remove(randomPoolIndex);
             this.numbersIndexes.add(randomIndex);
@@ -61,6 +62,7 @@ public class PasswordBuilderImpl implements PasswordBuilder {
 
         // then letters
         for (int i=0; i<numLetters; i++) {
+            if (pool.isEmpty()) break;
             int randomPoolIndex = rand.nextInt(pool.size());
             int randomIndex = pool.remove(randomPoolIndex);
             this.lettersIndexes.add(randomIndex);
@@ -68,6 +70,7 @@ public class PasswordBuilderImpl implements PasswordBuilder {
 
         // lastly, special characters
         for (int i=0; i<numSpecials; i++) {
+            if (pool.isEmpty()) break;
             int randomPoolIndex = rand.nextInt(pool.size());
             int randomIndex = pool.remove(randomPoolIndex);
             this.specialsIndexes.add(randomIndex);

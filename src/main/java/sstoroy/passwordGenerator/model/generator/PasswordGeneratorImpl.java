@@ -2,7 +2,7 @@ package sstoroy.passwordGenerator.model.generator;
 
 import sstoroy.passwordGenerator.model.password.PasswordBuilder;
 import sstoroy.passwordGenerator.model.password.PasswordBuilderImpl;
-import sstoroy.passwordGenerator.model.settings.PasswordSettings;
+import sstoroy.passwordGenerator.model.settings.manager.PasswordSettings;
 
 import java.util.*;
 
@@ -23,7 +23,7 @@ public class PasswordGeneratorImpl implements PasswordGenerator {
         PasswordBuilder password = new PasswordBuilderImpl(
                 settings.passwordLength(),
                 settings.numbersChance(),
-                settings.specialCharacterChance()
+                settings.symbolsChance()
         );
 
         // character pools for the password creation
@@ -37,7 +37,7 @@ public class PasswordGeneratorImpl implements PasswordGenerator {
             }
         }
         List<Character> numbersPool = createPoolFromString(settings.numbers());
-        List<Character> specialsPool = createPoolFromString(settings.specialCharacters());
+        List<Character> specialsPool = createPoolFromString(settings.symbols());
 
         populatePasswordFromPool(password, password.letterIndexes(), lettersPool);
         populatePasswordFromPool(password, password.numberIndexes(), numbersPool);

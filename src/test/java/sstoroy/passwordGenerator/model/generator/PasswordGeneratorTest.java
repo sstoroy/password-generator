@@ -2,9 +2,10 @@ package sstoroy.passwordGenerator.model.generator;
 
 import org.junit.jupiter.api.Test;
 import sstoroy.passwordGenerator.model.chance.Chance;
-import sstoroy.passwordGenerator.model.settings.DefaultSettings;
-import sstoroy.passwordGenerator.model.settings.PasswordSettings;
-import sstoroy.passwordGenerator.model.settings.PasswordSettingsImpl;
+import sstoroy.passwordGenerator.model.settings.SettingKey;
+import sstoroy.passwordGenerator.model.settings.manager.DefaultSettings;
+import sstoroy.passwordGenerator.model.settings.manager.PasswordSettings;
+import sstoroy.passwordGenerator.model.settings.manager.PasswordSettingsImpl;
 
 import java.util.HashSet;
 import java.util.Random;
@@ -22,19 +23,19 @@ class PasswordGeneratorTest {
 
     PasswordGeneratorTest() {
         this.NUMBERS = new HashSet<>();
-        for (Character c: DefaultSettings.DECIMAL_NUMBERS.toCharArray()) {
+        for (Character c: DefaultSettings.getDefaultSetting(SettingKey.NUMBERS).getStringUnsafe().toCharArray()) {
             this.NUMBERS.add(c);
         }
         this.LOWERCASE_LETTERS = new HashSet<>();
-        for (Character c: DefaultSettings.ENGLISH_ALPHABET.toCharArray()) {
+        for (Character c: DefaultSettings.getDefaultSetting(SettingKey.ALPHABET).getStringUnsafe().toCharArray()) {
             this.LOWERCASE_LETTERS.add(c);
         }
         this.UPPERCASE_LETTERS = new HashSet<>();
-        for (Character c: "ABCDEFGHIJKLMNOPQRSTUVWXYZ".toCharArray()) {
-            this.UPPERCASE_LETTERS.add(c);
+        for (Character c: DefaultSettings.getDefaultSetting(SettingKey.ALPHABET).getStringUnsafe().toCharArray()) {
+            this.UPPERCASE_LETTERS.add(Character.toUpperCase(c));
         }
         this.SPECIAL_CHARACTERS = new HashSet<>();
-        for (Character c: DefaultSettings.SPECIAL_CHARACTERS.toCharArray()) {
+        for (Character c: DefaultSettings.getDefaultSetting(SettingKey.SYMBOLS).getStringUnsafe().toCharArray()) {
             this.SPECIAL_CHARACTERS.add(c);
         }
     }
@@ -43,7 +44,7 @@ class PasswordGeneratorTest {
     void populateWithLowercaseLetters() {
         PasswordSettings pwdSettings = new PasswordSettingsImpl()
                 .setNumbersChance(Chance.of(0))
-                .setSpecialCharacterChance(Chance.of(0))
+                .setSymbolsChance(Chance.of(0))
                 .setOnlyLowercase(true);
         PasswordGenerator pwdg = new PasswordGeneratorImpl(pwdSettings);
         for (int i=0;i<PWD_AMOUNT_TESTS;i++) {
@@ -62,7 +63,7 @@ class PasswordGeneratorTest {
     void populateWithLetters() {
         PasswordSettings pwdSettings = new PasswordSettingsImpl()
                 .setNumbersChance(Chance.of(0))
-                .setSpecialCharacterChance(Chance.of(0));
+                .setSymbolsChance(Chance.of(0));
         PasswordGenerator pwdg = new PasswordGeneratorImpl(pwdSettings);
         for (int i=0;i<PWD_AMOUNT_TESTS;i++) {
             int pwdLength = random.nextInt(DefaultSettings.MIN_LENGTH*2, DefaultSettings.MAX_LENGTH);
@@ -89,7 +90,7 @@ class PasswordGeneratorTest {
     void populateWithNumbers() {
         PasswordSettings pwdSettings = new PasswordSettingsImpl()
                 .setNumbersChance(Chance.of(100))
-                .setSpecialCharacterChance(Chance.of(0));
+                .setSymbolsChance(Chance.of(0));
         PasswordGenerator pwdg = new PasswordGeneratorImpl(pwdSettings);
         for (int i=0;i<PWD_AMOUNT_TESTS;i++) {
             int pwdLength = random.nextInt(DefaultSettings.MIN_LENGTH_NO, DefaultSettings.MAX_LENGTH);
@@ -106,7 +107,7 @@ class PasswordGeneratorTest {
     void populateWithSpecials() {
         PasswordSettings pwdSettings = new PasswordSettingsImpl()
                 .setNumbersChance(Chance.of(0))
-                .setSpecialCharacterChance(Chance.of(100))
+                .setSymbolsChance(Chance.of(100))
                 .setBeginWithLetter(false);
         PasswordGenerator pwdg = new PasswordGeneratorImpl(pwdSettings);
         for (int i=0;i<PWD_AMOUNT_TESTS;i++) {
@@ -124,7 +125,7 @@ class PasswordGeneratorTest {
     void mixLettersNumbers() {
         PasswordSettings pwdSettings = new PasswordSettingsImpl()
                 .setNumbersChance(Chance.of(50))
-                .setSpecialCharacterChance(Chance.of(0))
+                .setSymbolsChance(Chance.of(0))
                 .setBeginWithLetter(false);
         PasswordGenerator pwdg = new PasswordGeneratorImpl(pwdSettings);
         for (int i=0;i<PWD_AMOUNT_TESTS;i++) {
@@ -151,7 +152,7 @@ class PasswordGeneratorTest {
     void mixLettersNumbersSpecials() {
         PasswordSettings pwdSettings = new PasswordSettingsImpl()
                 .setNumbersChance(Chance.of(25))
-                .setSpecialCharacterChance(Chance.of(25))
+                .setSymbolsChance(Chance.of(25))
                 .setBeginWithLetter(false);
         PasswordGenerator pwdg = new PasswordGeneratorImpl(pwdSettings);
         for (int i=0;i<PWD_AMOUNT_TESTS;i++) {
@@ -187,7 +188,7 @@ class PasswordGeneratorTest {
             int pwdLength = random.nextInt(DefaultSettings.MIN_LENGTH, DefaultSettings.MAX_LENGTH);
             Chance specialChance = Chance.of(random.nextInt(49,51));
             pwdSettings.setPasswordLength(pwdLength)
-                .setSpecialCharacterChance(specialChance)
+                .setSymbolsChance(specialChance)
                 .setBeginWithLetter(true);
             String pwd = pwdg.generate();
             assertEquals(pwdLength, pwd.length());
@@ -206,10 +207,10 @@ class PasswordGeneratorTest {
     void noSimilars() {
         PasswordSettings pwdSettings = new PasswordSettingsImpl()
                 .setNumbersChance(Chance.of(0))
-                .setSpecialCharacterChance(Chance.of(0))
+                .setSymbolsChance(Chance.of(0))
                 .setExcludeSimilarCharacters(true);
         assertEquals("abcdefghjkmnprstuvwxyz", pwdSettings.alphabet());
-        assertNotEquals(DefaultSettings.DECIMAL_NUMBERS, pwdSettings.numbers());
+        assertNotEquals(DefaultSettings.getDefaultSetting(SettingKey.NUMBERS).getStringUnsafe(), pwdSettings.numbers());
 
         Set<Character> similars = DefaultSettings.SIMILAR_CHARACTERS;
         PasswordGenerator pwdg = new PasswordGeneratorImpl(pwdSettings);

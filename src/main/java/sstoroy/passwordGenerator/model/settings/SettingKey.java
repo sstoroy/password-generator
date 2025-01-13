@@ -8,7 +8,7 @@ import static sstoroy.passwordGenerator.model.settings.SettingType.*;
 public enum SettingKey {
     AMOUNT_PASSWORDS(10, "Number of passwords", "amount", INT),
     PASSWORD_LENGTH(9, "Password length", "length", INT),
-    LETTERS(0, "Letters", "alphabet", CHARS),
+    LETTERS(0, "Letters", "letters", CHARS),
     NUMBERS(1, "Numbers", "numbers", CHARS),
     NUMBERS_CHANCE(3, "Number to letter ratio", "number_chance", CHANCE),
     SYMBOLS(2, "Symbols", "symbols", CHARS),

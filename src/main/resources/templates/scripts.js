@@ -1,4 +1,5 @@
 function generatePasswords() {
+
         const paramsObject = Object.fromEntries(getFormValues("passwordForm"));
         const url = "/api/";
 
@@ -16,6 +17,7 @@ function generatePasswords() {
                 if (data["passwords"]) passwords = data["passwords"];
 
                 populatePasswordsTable(passwords);
+                if (data["settings"]) updatePasswordForm(data["settings"]);
 
                 if (passwords) showElement('result');
             })
@@ -55,12 +57,24 @@ function populatePasswordsTable(passwords) {
     });
 }
 
-function setField(event) {
+function updatePasswordForm(settings) {
+    for (const setting in settings) {
+        const element = document.getElementById(setting);
+        const value = settings[setting];
+        setField(element, value);
+    }
+}
+
+function setFieldFromEvent(event) {
     const target = event.currentTarget;
     const param = target.getAttribute("param");
     const element = document.getElementById(param);
     const value = target.getAttribute("value");
 
+    setField(element, value);
+}
+
+function setField(element, value) {
     if (value === "true" || value === "false") element.checked = value === "true";
     else element.value = value;
 }

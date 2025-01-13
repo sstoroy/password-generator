@@ -1,4 +1,4 @@
-package sstoroy.passwordGenerator.controller;
+package sstoroy.passwordGenerator.view;
 
 import java.util.List;
 import java.util.Map;

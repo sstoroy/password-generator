@@ -2,7 +2,7 @@ package sstoroy.passwordGenerator.model.settings.manager;
 
 import sstoroy.passwordGenerator.model.chance.Chance;
 import sstoroy.passwordGenerator.model.settings.SettingKey;
-import sstoroy.passwordGenerator.model.settings.SettingValue;
+import sstoroy.passwordGenerator.model.settings.value.SettingValue;
 
 import java.util.Map;
 

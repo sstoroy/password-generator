@@ -27,11 +27,11 @@ class PasswordGeneratorTest {
             this.NUMBERS.add(c);
         }
         this.LOWERCASE_LETTERS = new HashSet<>();
-        for (Character c: DefaultSettings.getDefaultSetting(SettingKey.ALPHABET).getStringUnsafe().toCharArray()) {
+        for (Character c: DefaultSettings.getDefaultSetting(SettingKey.LETTERS).getStringUnsafe().toCharArray()) {
             this.LOWERCASE_LETTERS.add(c);
         }
         this.UPPERCASE_LETTERS = new HashSet<>();
-        for (Character c: DefaultSettings.getDefaultSetting(SettingKey.ALPHABET).getStringUnsafe().toCharArray()) {
+        for (Character c: DefaultSettings.getDefaultSetting(SettingKey.LETTERS).getStringUnsafe().toCharArray()) {
             this.UPPERCASE_LETTERS.add(Character.toUpperCase(c));
         }
         this.SPECIAL_CHARACTERS = new HashSet<>();

@@ -1,7 +1,9 @@
 package sstoroy.passwordGenerator.controller;
 
 import org.springframework.web.bind.annotation.*;
+import sstoroy.passwordGenerator.model.generator.PasswordGeneratorImpl;
 import sstoroy.passwordGenerator.model.settings.manager.PasswordSettingsImpl;
+import sstoroy.passwordGenerator.view.PasswordGeneratorResponse;
 
 import java.util.List;
 import java.util.Map;
@@ -31,7 +33,7 @@ public class PasswordGeneratorAPI {
     }
 
     private PasswordGeneratorResponse getResponse(Map<String, String> params) {
-        return new PasswordGeneratorResponseImpl(
+        return new PasswordGeneratorImpl(
                 new PasswordSettingsImpl().setSettings(params)
         );
     }

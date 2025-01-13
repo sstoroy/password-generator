@@ -1,8 +1,11 @@
 package sstoroy.passwordGenerator.model.generator;
 
+import org.springframework.web.util.UriComponentsBuilder;
 import sstoroy.passwordGenerator.model.password.PasswordBuilder;
 import sstoroy.passwordGenerator.model.password.PasswordBuilderImpl;
+import sstoroy.passwordGenerator.model.settings.SettingKey;
 import sstoroy.passwordGenerator.model.settings.manager.PasswordSettings;
+import sstoroy.passwordGenerator.view.PasswordGeneratorResponse;
 
 import java.util.*;
 
@@ -10,12 +13,45 @@ import java.util.*;
  * The main implementation of PasswordGenerator. Takes a PasswordSettings
  * to determine the parameters for the password.
  */
-public class PasswordGeneratorImpl implements PasswordGenerator {
+public class PasswordGeneratorImpl implements PasswordGenerator, PasswordGeneratorResponse {
     private final Random random = new Random();
     private final PasswordSettings settings;
 
     public PasswordGeneratorImpl(PasswordSettings settings) {
         this.settings = settings;
+    }
+
+    private List<String> generatePasswords() {
+        int amount = settings.getSetting(SettingKey.AMOUNT_PASSWORDS).getIntegerUnsafe();
+        List<String> passwords = new ArrayList<>(amount);
+        for (int i=0;i<amount;i++) {
+            passwords.add(generate());
+        }
+        return passwords;
+    }
+
+    @Override
+    public List<String> getPasswords() {
+        return generatePasswords();
+    }
+
+    @Override
+    public Map<String, String> getSettings() {
+        Map<String, String> settingsAsStrings = new HashMap<>();
+        for (SettingKey key : SettingKey.values()) {
+            settingsAsStrings.put(key.getParam(), settings.getSetting(key).valueString());
+        }
+        return settingsAsStrings;
+    }
+
+    @Override
+    public String getParameterURL() {
+        Map<String, String> parameters = getSettings();
+        UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromPath("");
+        for (String key : parameters.keySet()) {
+            uriBuilder.queryParam(key, parameters.get(key));
+        }
+        return uriBuilder.build().encode().toUriString();
     }
 
     @Override

@@ -1,10 +1,10 @@
 <button id="showAPIInfoButton" type="button" onclick="showAPI()">Show API info</button>
 <div id="APIInfo" style="display:none">
     <h1>API information</h1>
-    <p>
-        <a href="/api/main">API</a><br>
-        <a href="/api/passwords">Passwords</a><br>
-        <a href="/api/settings">Settings</a><br>
-        <a href="/api/params">Parameter URL</a>
+    <p>All entries are POST.<br>
+        - `/api/index` returns a JSON with all the settings used, the password(s) created and a parameter URL that can be copied and pasted to the main page.
+        - `/api/passwords` returns a JSON with the password(s) generated
+        - `/api/settings` returns a JSON with the settings used for password generation
+        - `/api/params` returns a string with just the parameters for use in  the URL
     </p>
 </div>

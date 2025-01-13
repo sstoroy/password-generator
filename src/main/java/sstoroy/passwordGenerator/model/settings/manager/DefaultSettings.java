@@ -2,7 +2,7 @@ package sstoroy.passwordGenerator.model.settings.manager;
 
 import sstoroy.passwordGenerator.model.chance.Chance;
 import sstoroy.passwordGenerator.model.settings.SettingKey;
-import sstoroy.passwordGenerator.model.settings.SettingValue;
+import sstoroy.passwordGenerator.model.settings.value.SettingValue;
 
 import java.util.Map;
 import java.util.Set;
@@ -25,7 +25,7 @@ public abstract class DefaultSettings implements PasswordSettings {
                 Map.entry(SettingKey.BEGIN_WITH_LETTER, SettingValue.of(true)),
                 Map.entry(SettingKey.NO_DUPLICATES, SettingValue.of(false)),
                 Map.entry(SettingKey.EXCLUDE_SIMILAR, SettingValue.of(false)),
-                Map.entry(SettingKey.ALPHABET, SettingValue.of("abcdefghijklmnopqrstuvwxyz")),
+                Map.entry(SettingKey.LETTERS, SettingValue.of("abcdefghijklmnopqrstuvwxyz")),
                 Map.entry(SettingKey.NUMBERS, SettingValue.of("0123456789")),
                 Map.entry(SettingKey.SYMBOLS, SettingValue.of("! #$%&'()*+,-./\\:;<>=?@[]^_`{|}~")),
                 Map.entry(SettingKey.NUMBERS_CHANCE, SettingValue.of(Chance.of(25))),

@@ -2,7 +2,7 @@ package sstoroy.passwordGenerator.model.settings.manager;
 
 import sstoroy.passwordGenerator.model.chance.Chance;
 import sstoroy.passwordGenerator.model.settings.SettingKey;
-import sstoroy.passwordGenerator.model.settings.SettingValue;
+import sstoroy.passwordGenerator.model.settings.value.SettingValue;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -13,7 +13,7 @@ public class PasswordSettingsImpl extends DefaultSettings {
 
     @Override public int passwordAmount() {return getSetting(SettingKey.AMOUNT_PASSWORDS).getInteger().orElseThrow();}
     @Override public int passwordLength() {return getSetting(SettingKey.PASSWORD_LENGTH).getInteger().orElseThrow();}
-    @Override public String alphabet() {return getSetting(SettingKey.ALPHABET).getString().orElseThrow();}
+    @Override public String alphabet() {return getSetting(SettingKey.LETTERS).getString().orElseThrow();}
     @Override public String numbers() {return getSetting(SettingKey.NUMBERS).getString().orElseThrow();}
     @Override public Chance numbersChance() {return getSetting(SettingKey.NUMBERS_CHANCE).getChance().orElseThrow();}
     @Override public String symbols() {return getSetting(SettingKey.SYMBOLS).getString().orElseThrow();}
@@ -71,7 +71,7 @@ public class PasswordSettingsImpl extends DefaultSettings {
                 if (maybeValue.isEmpty()) break;
                 setPasswordLength(maybeValue.get());
             }
-            case ALPHABET -> {
+            case LETTERS -> {
                 Optional<String> maybeValue = value.getString();
                 if (maybeValue.isEmpty()) break;
                 setAlphabet(maybeValue.get());
@@ -148,7 +148,7 @@ public class PasswordSettingsImpl extends DefaultSettings {
     @Override
     public PasswordSettings setAlphabet(String alphabet) {
         if (alphabet == null || alphabet.isEmpty() || alphabet.length() > MAX_LENGTH) {
-            alphabet = getDefaultSetting(SettingKey.ALPHABET).getStringUnsafe();
+            alphabet = getDefaultSetting(SettingKey.LETTERS).getStringUnsafe();
         }
         StringBuilder alphabetBuilder = new StringBuilder();
         for (char c : alphabet.toCharArray()) {
@@ -163,11 +163,11 @@ public class PasswordSettingsImpl extends DefaultSettings {
             }
         }
         if (alphabetBuilder.isEmpty()) {
-            alphabet = getDefaultSetting(SettingKey.ALPHABET).getStringUnsafe();
+            alphabet = getDefaultSetting(SettingKey.LETTERS).getStringUnsafe();
         } else {
             alphabet = alphabetBuilder.toString();
         }
-        settings.put(SettingKey.ALPHABET, SettingValue.of(alphabet));
+        settings.put(SettingKey.LETTERS, SettingValue.of(alphabet));
         return this;
     }
 
@@ -185,8 +185,8 @@ public class PasswordSettingsImpl extends DefaultSettings {
             // no dupes, not a default character and is an integer
             if (
                 doesNotContain(numbersBuilder.toString(), c)
-                && doesNotContain(getDefaultSetting(SettingKey.ALPHABET).getStringUnsafe(), c)
-                && doesNotContain(getDefaultSetting(SettingKey.NUMBERS).getStringUnsafe(), c)
+                && doesNotContain(getDefaultSetting(SettingKey.LETTERS).getStringUnsafe(), c)
+                && !doesNotContain(getDefaultSetting(SettingKey.NUMBERS).getStringUnsafe(), c)
                 && !(excludeSimilarCharacters() && SIMILAR_CHARACTERS.contains(c))
             ) {
                 numbersBuilder.append(c);
@@ -246,28 +246,28 @@ public class PasswordSettingsImpl extends DefaultSettings {
             settings.put(SettingKey.EXCLUDE_SIMILAR, SettingValue.of(false));
             return this;
         }
-        String pool = removeSimilarCharacters(alphabet());
+        String pool = removeSimilarCharactersFromPool(alphabet());
         if (pool.isEmpty()) {
-            pool = removeSimilarCharacters(getDefaultSetting(SettingKey.ALPHABET).getStringUnsafe());
+            pool = removeSimilarCharactersFromPool(getDefaultSetting(SettingKey.LETTERS).getStringUnsafe());
         }
         setAlphabet(pool);
 
-        pool = removeSimilarCharacters(numbers());
+        pool = removeSimilarCharactersFromPool(numbers());
         if (pool.isEmpty()) {
-            pool = removeSimilarCharacters(getDefaultSetting(SettingKey.ALPHABET).getStringUnsafe());
+            pool = removeSimilarCharactersFromPool(getDefaultSetting(SettingKey.LETTERS).getStringUnsafe());
         }
         setNumbers(pool);
 
-        pool = removeSimilarCharacters(symbols());
+        pool = removeSimilarCharactersFromPool(symbols());
         if (pool.isEmpty()) {
-            pool = removeSimilarCharacters(getDefaultSetting(SettingKey.SYMBOLS).getStringUnsafe());
+            pool = removeSimilarCharactersFromPool(getDefaultSetting(SettingKey.SYMBOLS).getStringUnsafe());
         }
         setSymbols(pool);
         settings.put(SettingKey.EXCLUDE_SIMILAR, SettingValue.of(true));
         return this;
     }
 
-    private String removeSimilarCharacters(String originalPool) {
+    private String removeSimilarCharactersFromPool(String originalPool) {
         StringBuilder poolBuilder = new StringBuilder();
         for (Character c : originalPool.toCharArray()) {
             if (!SIMILAR_CHARACTERS.contains(c)) {

@@ -52,27 +52,27 @@ class PasswordSettingsTest {
         settings.setAlphabet(" ");
         settings.setNumbers(" ");
         settings.setSymbols(" ");
-        assertEquals(DefaultSettings.getDefaultSetting(SettingKey.ALPHABET).getStringUnsafe(), settings.alphabet());
+        assertEquals(DefaultSettings.getDefaultSetting(SettingKey.LETTERS).getStringUnsafe(), settings.alphabet());
         assertEquals(DefaultSettings.getDefaultSetting(SettingKey.NUMBERS).getStringUnsafe(), settings.numbers());
         assertEquals(" ", settings.symbols());
 
         settings.setAlphabet(null);
         settings.setNumbers(null);
         settings.setSymbols(null);
-        assertEquals(DefaultSettings.getDefaultSetting(SettingKey.ALPHABET).getStringUnsafe(), settings.alphabet());
+        assertEquals(DefaultSettings.getDefaultSetting(SettingKey.LETTERS).getStringUnsafe(), settings.alphabet());
         assertEquals(DefaultSettings.getDefaultSetting(SettingKey.NUMBERS).getStringUnsafe(), settings.numbers());
         assertEquals(DefaultSettings.getDefaultSetting(SettingKey.SYMBOLS).getStringUnsafe(), settings.symbols());
 
         settings.setAlphabet("");
         settings.setNumbers("");
         settings.setSymbols("");
-        assertEquals(DefaultSettings.getDefaultSetting(SettingKey.ALPHABET).getStringUnsafe(), settings.alphabet());
+        assertEquals(DefaultSettings.getDefaultSetting(SettingKey.LETTERS).getStringUnsafe(), settings.alphabet());
         assertEquals(DefaultSettings.getDefaultSetting(SettingKey.NUMBERS).getStringUnsafe(), settings.numbers());
         assertEquals(DefaultSettings.getDefaultSetting(SettingKey.SYMBOLS).getStringUnsafe(), settings.symbols());
 
         settings.setAlphabet("123!?+");
         settings.setNumbers("abc!?+");
-        assertEquals(DefaultSettings.getDefaultSetting(SettingKey.ALPHABET).getStringUnsafe(), settings.alphabet());
+        assertEquals(DefaultSettings.getDefaultSetting(SettingKey.LETTERS).getStringUnsafe(), settings.alphabet());
         assertEquals(DefaultSettings.getDefaultSetting(SettingKey.NUMBERS).getStringUnsafe(), settings.numbers());
     }
 
